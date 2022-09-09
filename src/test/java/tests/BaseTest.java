@@ -7,8 +7,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
 public class BaseTest {
-    ISettingsFile environment = new JsonSettingsFile("config.json");
-    String url = environment.getValue("/startPageUrl").toString();
+    private final ISettingsFile environment = new JsonSettingsFile("config.json");
+    private final String url = environment.getValue("/startPageUrl").toString();
 
     @BeforeTest
     public void init() {

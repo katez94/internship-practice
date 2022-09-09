@@ -22,7 +22,7 @@ public class TestHelper {
         return RandomStringUtils.randomAlphabetic(7) + RandomStringUtils.randomNumeric(1) + cyrillycLetter + oneLetterFromEmail;
     }
 
-    public static String getImagePathFromJson(){
+    public static String getImagePathFromJson() {
         ISettingsFile environment = new JsonSettingsFile("config.json");
         return environment.getValue("/imagePath").toString();
     }

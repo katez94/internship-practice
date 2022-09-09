@@ -4,7 +4,7 @@ import aquality.selenium.elements.interfaces.*;
 import aquality.selenium.forms.Form;
 import org.openqa.selenium.By;
 
-public class CardForm1 extends Form {
+public class RegistrationForm extends Form {
     private final ITextBox passwordBox = getElementFactory().getTextBox(By.xpath("//input[@placeholder='Choose Password']"), "password box");
     private final ITextBox emailBox = getElementFactory().getTextBox(By.xpath("//input[@placeholder='Your email']"), "email box");
     private final ITextBox domainBox = getElementFactory().getTextBox(By.xpath("//input[@placeholder='Domain']"), "domain box");
@@ -18,12 +18,8 @@ public class CardForm1 extends Form {
     private final IButton nextBtn = getElementFactory().getButton(By.xpath("//*[contains(@class,'button--secondary')]"), "next button");
     private final ILabel timerText = getElementFactory().getLabel(By.xpath("//*[contains(@class,'timer') and contains(@class,'timer--center')]"), "timer text");
 
-    public CardForm1() {
-        super(By.className("page-indicator"), "card form");
-    }
-
-    public Boolean checkCardNumber(String number) {
-        return this.getFormLabel().getElement().getText().contains(number);
+    public RegistrationForm() {
+        super(By.xpath("//*[contains(@class,'page-indicator') and contains(text(),'1 / 4')]"), "registration form");
     }
 
     public void inputRandomPassword(String password) {
@@ -43,7 +39,6 @@ public class CardForm1 extends Form {
     }
 
     public void chooseOrgItemFromDropdownMenu() {
-        //todo click on any item from list
         dropdownOrgItem.click();
     }
 
