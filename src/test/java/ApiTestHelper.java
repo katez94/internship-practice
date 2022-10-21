@@ -5,11 +5,7 @@ import com.google.gson.Gson;
 import io.restassured.response.Response;
 import models.Post;
 import models.User;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.openqa.selenium.json.TypeToken;
-
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,21 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApiTestHelper {
-
-    public static boolean isStringJson(String json) {
-        try {
-            new JSONObject(json);
-        } catch (JSONException e) {
-            try {
-                new JSONArray(json);
-            } catch (JSONException ne) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static User getUserById(List<User> list, int id) {
+    public static User getUserFromListById(List<User> list, int id) {
         for (User user : list) {
             if (user.getId() == id) {
                 return user;
@@ -74,8 +56,12 @@ public class ApiTestHelper {
         return Ordering.natural().isOrdered(list);
     }
 
-    public static Post getPostModel(Response response) {
+    public static Post getPostModelFromResponse(Response response) {
         return response.getBody().as(Post.class);
+    }
+
+    public static User getUserModelFromResponse(Response response) {
+        return response.getBody().as(User.class);
     }
 
     public static String removeBracesFromResponseBody(Response response) {
