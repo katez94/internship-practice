@@ -1,7 +1,6 @@
-import api.ApiHelper;
+import utils.ApiHelper;
 import api.Keys;
 import api.Types;
-import api.VkApiUtils;
 import aquality.selenium.browser.AqualityServices;
 import forms.MenuForm;
 import io.restassured.response.Response;
@@ -11,13 +10,12 @@ import org.testng.annotations.Test;
 import pages.PersonalPage;
 import steps.ApiSteps;
 import steps.UIsteps;
+import utils.Attribute;
 
 import java.io.File;
 
 public class VkTest extends BaseTest {
-    private final MenuForm menu = new MenuForm();
-    private final PersonalPage personalPage = new PersonalPage();
-    public static final String OWNER_ID = ApiHelper.getOwnerId();
+    public static final String OWNER_ID = ApiHelper.getValueFromJson(Attribute.OWNER_ID);
     public static final String RANDOM_TEXT = RandomStringUtils.randomAlphabetic(10);
     public static final String RANDOM_TEXT_FOR_EDIT = RandomStringUtils.randomAlphabetic(10);
     public static final String RANDOM_COMMENT = RandomStringUtils.randomAlphabetic(10);
@@ -30,20 +28,22 @@ public class VkTest extends BaseTest {
         UIsteps.signIn();
 
         AqualityServices.getLogger().info("Перейти на Мою страницу");
+        MenuForm menu = new MenuForm();
         menu.goToPersonalPage();
 
         AqualityServices.getLogger().info("Создать запись со случайно сгенерированным текстом на стене и получить id записи");
-        Response response = VkApiUtils.createPostOnTheWall(OWNER_ID, RANDOM_TEXT);
+        Response response = ApiSteps.createPostOnTheWall(OWNER_ID, RANDOM_TEXT);
         String postId = ApiHelper.getValueFromResponse(response.getBody().asString(), Keys.POST_ID);
 
         AqualityServices.getLogger().info("Не обновляя страницу убедиться, что на стене появилась запись с нужным текстом от правильного пользователя");
+        PersonalPage personalPage = new PersonalPage();
         personalPage.scrollToPost(OWNER_ID, postId);
         String textFromPost = personalPage.getTextFromWallPost(postId);
         Assert.assertEquals(textFromPost, RANDOM_TEXT);
 
         AqualityServices.getLogger().info("Отредактировать запись через запрос к API - изменить текст и добавить (загрузить) любую картинку");
         String photoId = ApiSteps.getPhotoId(OWNER_ID, IMAGE_FULL_PATH);
-        VkApiUtils.editPostOnTheWall(OWNER_ID, postId, RANDOM_TEXT_FOR_EDIT, photoId);
+        ApiSteps.editPostOnTheWall(OWNER_ID, postId, RANDOM_TEXT_FOR_EDIT, photoId);
 
         AqualityServices.getLogger().info("Не обновляя страницу убедиться, что изменился текст сообщения и добавилась загруженная картинка (картинки одинаковые)");
         String photoLink = personalPage.getPhotoLink(postId);
@@ -65,12 +65,13 @@ public class VkTest extends BaseTest {
         personalPage.clickLikeBtn(postId);
 
         AqualityServices.getLogger().info("Через запрос к API убедиться, что у записи появился лайк от правильного пользователя");
-        Response isItemLikedResponse = VkApiUtils.isItemLiked(OWNER_ID, postId, Types.POST);
+        Response isItemLikedResponse = ApiSteps.isItemLiked(OWNER_ID, postId, Types.POST);
+        System.out.println(isItemLikedResponse.getBody().asString());
         String likeStatus = ApiHelper.getValueFromResponse(isItemLikedResponse.getBody().asString(), Keys.LIKED);
         Assert.assertEquals(likeStatus, POSITIVE_LIKE_STATUS);
 
         AqualityServices.getLogger().info("Через запрос к API удалить созданную запись");
-        VkApiUtils.deleteWallPost(OWNER_ID, postId);
+        ApiSteps.deleteWallPost(OWNER_ID, postId);
 
         AqualityServices.getLogger().info("Не обновляя страницу убедиться, что запись удалена");
         Boolean isWallPostDeleted = personalPage.isWallPostDeleted(OWNER_ID, postId);

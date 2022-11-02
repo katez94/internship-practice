@@ -1,27 +1,78 @@
 package steps;
 
-import api.ApiHelper;
 import api.Keys;
+import api.Methods;
+import api.Parameters;
 import api.VkApiUtils;
+import api.models.SavedPhoto;
+import com.google.gson.Gson;
 import io.restassured.response.Response;
-import utils.TestHelper;
+import utils.ApiHelper;
+import utils.RegexHelper;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApiSteps {
     public static String getPhotoId(String ownerId, String imageFullPath) {
-        Response getWallUploadServerResponse = VkApiUtils.getWallUploadServer();
+        Response getWallUploadServerResponse = getWallUploadServer();
         String uploadLink = ApiHelper.getValueFromResponse(getWallUploadServerResponse.getBody().asString(), Keys.UPLOAD_URL);
-        Response getFileToServerResponse = VkApiUtils.sendFileToServer(uploadLink, imageFullPath);
-        String server = ApiHelper.getValueFromResponse(getFileToServerResponse.getBody().asString(), Keys.SERVER);
-        String photo = TestHelper.removeSlashes(ApiHelper.getValueFromResponse(getFileToServerResponse.getBody().asString(), Keys.PHOTO));
-        String hash = ApiHelper.getValueFromResponse(getFileToServerResponse.getBody().asString(), Keys.HASH);
-        Response saveWallPhotoResponse = VkApiUtils.saveWallPhoto(server, photo, hash);
+        Response sendFileToServerResponse = VkApiUtils.sendFileToServer(uploadLink, imageFullPath);
+        SavedPhoto savedPhoto = new Gson().fromJson(sendFileToServerResponse.getBody().asString(), SavedPhoto.class);
+        Response saveWallPhotoResponse = saveWallPhoto(savedPhoto);
         String photoId = ApiHelper.getValueFromResponse(saveWallPhotoResponse.getBody().asString(), Keys.ID);
-        photoId = TestHelper.removeAllButNumbers(photoId);
+        photoId = RegexHelper.removeAllButNumbers(photoId);
         return ApiHelper.makePhotoToSendToWallPost(ownerId, photoId);
     }
 
     public static String addCommentToWallPost(String ownerId, String postId, String text) {
-        Response addCommentToWallPostResponse = VkApiUtils.addCommentToWallPost(ownerId, postId, text);
-        return ApiHelper.getValueFromResponse(addCommentToWallPostResponse.getBody().asString(), Keys.COMMENT_ID);
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.OWNER_ID, ownerId);
+        params.put(Parameters.POST_ID, postId);
+        params.put(Parameters.MESSAGE, text);
+        Response response = VkApiUtils.sendPostRequest(Methods.CREATE_COMMENT, params);
+        return ApiHelper.getValueFromResponse(response.getBody().asString(), Keys.COMMENT_ID);
+    }
+
+    public static Response createPostOnTheWall(String ownerId, String randomMessage) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.OWNER_ID, ownerId);
+        params.put(Parameters.MESSAGE, randomMessage);
+        return VkApiUtils.sendPostRequest(Methods.WALL_POST, params);
+    }
+
+    public static Response getWallUploadServer() {
+        return VkApiUtils.sendPostRequest(Methods.WALL_UPLOAD_SERVER);
+    }
+
+    public static Response editPostOnTheWall(String ownerId, String postId, String text, String attachment) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.OWNER_ID, ownerId);
+        params.put(Parameters.POST_ID, postId);
+        params.put(Parameters.MESSAGE, text);
+        params.put(Parameters.ATTACHMENTS, attachment);
+        return VkApiUtils.sendPostRequest(Methods.WALL_POST_EDIT, params);
+    }
+
+    public static Response isItemLiked(String userId, String postId, String type) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.USER_ID, userId);
+        params.put(Parameters.ITEM_ID, postId);
+        params.put(Parameters.TYPE, type);
+        return VkApiUtils.sendPostRequest(Methods.IS_LIKED, params);
+    }
+
+    public static Response deleteWallPost(String ownerId, String postId) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.OWNER_ID, ownerId);
+        params.put(Parameters.POST_ID, postId);
+        return VkApiUtils.sendPostRequest(Methods.DELETE_WALL_POST, params);
+    }
+
+    public static Response saveWallPhoto(SavedPhoto savedPhoto) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Parameters.SERVER, savedPhoto.getServer());
+        params.put(Parameters.PHOTO, savedPhoto.getPhoto());
+        params.put(Parameters.HASH, savedPhoto.getHash());
+        return VkApiUtils.sendPostRequest(Methods.SAVE_WALL_PHOTO, params);
     }
 }
