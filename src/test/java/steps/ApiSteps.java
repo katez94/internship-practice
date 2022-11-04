@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import io.restassured.response.Response;
 import utils.ApiHelper;
 import utils.RegexHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class ApiSteps {
         params.put(Parameters.OWNER_ID, ownerId);
         params.put(Parameters.POST_ID, postId);
         params.put(Parameters.MESSAGE, text);
-        Response response = VkApiUtils.sendPostRequest(Methods.CREATE_COMMENT, params);
+        Response response = VkApiUtils.sendGetRequest(Methods.CREATE_COMMENT, params);
         return ApiHelper.getValueFromResponse(response.getBody().asString(), Keys.COMMENT_ID);
     }
 
@@ -37,11 +38,11 @@ public class ApiSteps {
         Map<String, String> params = new HashMap<>();
         params.put(Parameters.OWNER_ID, ownerId);
         params.put(Parameters.MESSAGE, randomMessage);
-        return VkApiUtils.sendPostRequest(Methods.WALL_POST, params);
+        return VkApiUtils.sendGetRequest(Methods.WALL_POST, params);
     }
 
     public static Response getWallUploadServer() {
-        return VkApiUtils.sendPostRequest(Methods.WALL_UPLOAD_SERVER);
+        return VkApiUtils.sendGetRequest(Methods.WALL_UPLOAD_SERVER);
     }
 
     public static Response editPostOnTheWall(String ownerId, String postId, String text, String attachment) {
@@ -50,7 +51,7 @@ public class ApiSteps {
         params.put(Parameters.POST_ID, postId);
         params.put(Parameters.MESSAGE, text);
         params.put(Parameters.ATTACHMENTS, attachment);
-        return VkApiUtils.sendPostRequest(Methods.WALL_POST_EDIT, params);
+        return VkApiUtils.sendGetRequest(Methods.WALL_POST_EDIT, params);
     }
 
     public static Response isItemLiked(String userId, String postId, String type) {
@@ -58,14 +59,14 @@ public class ApiSteps {
         params.put(Parameters.USER_ID, userId);
         params.put(Parameters.ITEM_ID, postId);
         params.put(Parameters.TYPE, type);
-        return VkApiUtils.sendPostRequest(Methods.IS_LIKED, params);
+        return VkApiUtils.sendGetRequest(Methods.IS_LIKED, params);
     }
 
     public static Response deleteWallPost(String ownerId, String postId) {
         Map<String, String> params = new HashMap<>();
         params.put(Parameters.OWNER_ID, ownerId);
         params.put(Parameters.POST_ID, postId);
-        return VkApiUtils.sendPostRequest(Methods.DELETE_WALL_POST, params);
+        return VkApiUtils.sendGetRequest(Methods.DELETE_WALL_POST, params);
     }
 
     public static Response saveWallPhoto(SavedPhoto savedPhoto) {
@@ -73,6 +74,6 @@ public class ApiSteps {
         params.put(Parameters.SERVER, savedPhoto.getServer());
         params.put(Parameters.PHOTO, savedPhoto.getPhoto());
         params.put(Parameters.HASH, savedPhoto.getHash());
-        return VkApiUtils.sendPostRequest(Methods.SAVE_WALL_PHOTO, params);
+        return VkApiUtils.sendGetRequest(Methods.SAVE_WALL_PHOTO, params);
     }
 }

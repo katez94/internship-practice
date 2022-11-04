@@ -10,17 +10,17 @@ import org.testng.annotations.Test;
 import pages.PersonalPage;
 import steps.ApiSteps;
 import steps.UIsteps;
-import utils.Attribute;
+import utils.ApiAttribute;
 
 import java.io.File;
 
 public class VkTest extends BaseTest {
-    public static final String OWNER_ID = ApiHelper.getValueFromJson(Attribute.OWNER_ID);
+    public static final String OWNER_ID = ApiAttribute.getValueFromJson(ApiAttribute.OWNER_ID);
     public static final String RANDOM_TEXT = RandomStringUtils.randomAlphabetic(10);
     public static final String RANDOM_TEXT_FOR_EDIT = RandomStringUtils.randomAlphabetic(10);
     public static final String RANDOM_COMMENT = RandomStringUtils.randomAlphabetic(10);
     public static final String POSITIVE_LIKE_STATUS = "1";
-    public static final String IMAGE_FULL_PATH = new File(ApiHelper.getImagePathFromJson()).getAbsolutePath();
+    public static final String IMAGE_FULL_PATH = new File(ApiAttribute.getValueFromJson(ApiAttribute.IMAGE_PATH)).getAbsolutePath();
 
     @Test
     public void test() {

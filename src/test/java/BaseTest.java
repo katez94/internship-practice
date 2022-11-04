@@ -1,12 +1,12 @@
 import aquality.selenium.browser.AqualityServices;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
-import utils.UIHelper;
+import utils.UiAttribute;
 
 public class BaseTest {
     @BeforeTest
     public void init() {
-        AqualityServices.getBrowser().goTo(UIHelper.getUrl());
+        AqualityServices.getBrowser().goTo(UiAttribute.getValueFromJson(UiAttribute.URL));
         AqualityServices.getBrowser().maximize();
     }
 
