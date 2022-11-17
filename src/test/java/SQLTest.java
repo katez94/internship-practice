@@ -1,10 +1,13 @@
-import db.TestRepository;
-import model.TestModel;
+import repository.TestRepository;
+import model.BrowserExecutionAmountModel;
+import model.MinWorkingTimeModel;
+import model.TestAfterDateModel;
+import model.UniqueTestsAmountModel;
 import org.testng.annotations.Test;
 import repository.TestRepositoryImpl;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 public class SQLTest {
     private static final String DATE = "2015-11-07";
@@ -12,28 +15,28 @@ public class SQLTest {
     @Test
     public void minWorkingTimeForEachTestTest() {
         final TestRepository testRepository = new TestRepositoryImpl();
-        final List<TestModel> minWorkingTimeForEachTest = testRepository.getMinWorkingTimeForEachTest();
+        final List<MinWorkingTimeModel> minWorkingTimeForEachTest = testRepository.getMinWorkingTimeForEachTest();
         TestHelper.printAsTable(minWorkingTimeForEachTest);
     }
 
     @Test
     public void uniqueTestsAmountForEachProjectTest() {
         final TestRepository testRepository = new TestRepositoryImpl();
-        final Map<String, Integer> map = testRepository.getUniqueTestsAmountForEachProject();
-        TestHelper.printAsTable(map);
+        final List<UniqueTestsAmountModel> uniqueTestsAmountModels = testRepository.getUniqueTestsAmountForEachProject();
+        TestHelper.printAsTable(uniqueTestsAmountModels);
     }
 
     @Test
-    public void getTestsAfterDate() {
+    public void getTestsAfterDate() throws SQLException {
         final TestRepository testRepository = new TestRepositoryImpl();
-        final List<TestModel> testsAfterDate = testRepository.getTestsAfterDate(DATE);
+        final List<TestAfterDateModel> testsAfterDate = testRepository.getTestsAfterDate(DATE);
         TestHelper.printAsTable(testsAfterDate);
     }
 
     @Test
     public void getBrowsersExecutionAmountTest() {
         final TestRepository testRepository = new TestRepositoryImpl();
-        final List<TestModel> browsersExecutionAmount = testRepository.getBrowsersExecutionAmount();
+        final List<BrowserExecutionAmountModel> browsersExecutionAmount = testRepository.getBrowsersExecutionAmount();
         TestHelper.printAsTable(browsersExecutionAmount);
     }
 }

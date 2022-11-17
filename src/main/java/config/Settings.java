@@ -1,4 +1,4 @@
-package db;
+package config;
 
 public class Settings {
     public static final String DB_URL = JsonAttributes.getValueFromJson(JsonAttributes.DB_URL);

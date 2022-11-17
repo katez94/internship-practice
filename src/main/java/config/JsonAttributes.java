@@ -1,4 +1,4 @@
-package db;
+package config;
 
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
